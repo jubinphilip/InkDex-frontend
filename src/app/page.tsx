@@ -54,7 +54,7 @@ export default function LandingPage() {
           <div className="hero-content">
             <div className="hero-badge">
               <span className="hero-badge-dot" />
-              AI-Powered · RAG · pgvector
+              AI-Powered 
             </div>
 
             <h1 className="hero-title">

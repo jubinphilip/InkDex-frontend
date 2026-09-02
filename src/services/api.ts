@@ -1,6 +1,33 @@
 import { getToken } from "@/lib/token";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
+function getBaseUrl(): string {
+  const rawBaseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.NEXT_PUBLIC_API_URL;
+
+  if (!rawBaseUrl) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_API_BASE_URL. You can also set NEXT_PUBLIC_API_URL for backward compatibility.",
+    );
+  }
+
+  const normalizedBaseUrl = rawBaseUrl.trim().replace(/\/+$/, "");
+
+  try {
+    const url = new URL(normalizedBaseUrl);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      throw new Error("Unsupported protocol");
+    }
+
+    return url.toString().replace(/\/+$/, "");
+  } catch {
+    throw new Error(
+      `Invalid API base URL "${rawBaseUrl}". Use a full absolute URL such as https://inkdex-server-production.up.railway.app`,
+    );
+  }
+}
+
+const BASE_URL = getBaseUrl();
 
 type Method = "GET" | "POST" | "DELETE";
 
@@ -12,6 +39,7 @@ interface RequestOptions {
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, auth = true } = options;
+  const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
 
   const headers: HeadersInit = {};
 
@@ -27,7 +55,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,
     body: isFormData ? body : body ? JSON.stringify(body) : undefined,
