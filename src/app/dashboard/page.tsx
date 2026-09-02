@@ -12,7 +12,7 @@ import { useDocuments } from "@/hooks/useDocuments";
 export default function DashboardPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const { documents, loading, error, refetch } = useDocuments();
+  const { documents, loading, isPolling, error, refetch } = useDocuments();
   const [showUpload, setShowUpload] = useState(false);
 
   useEffect(() => {
@@ -38,6 +38,11 @@ export default function DashboardPage() {
             <h1 className="page-title">My Library</h1>
             <p className="page-subtitle">
               {documents.length} document{documents.length !== 1 ? "s" : ""} indexed
+              {isPolling && (
+                <span style={{ marginLeft: 10, fontSize: 12, color: "#fbbf24" }}>
+                  • Updating processing status…
+                </span>
+              )}
             </p>
           </div>
           <button

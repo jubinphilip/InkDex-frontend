@@ -22,3 +22,8 @@ export async function uploadDocument(file: File): Promise<DocumentUploadResponse
 export async function deleteDocument(documentId: string): Promise<DocumentDeleteResponse> {
   return api.delete<DocumentDeleteResponse>(`/document/${documentId}`);
 }
+
+export async function getDocumentStatus(documentId: string): Promise<Document> {
+  return api.get<Document>(`/document/${documentId}`);
+}
+

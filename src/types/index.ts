@@ -2,6 +2,7 @@ export interface Document {
   id: string;
   file_name: string;
   file_url: string;
+  status: "processing" | "completed" | "failed" | string;
   created_at: string;
   updated_at: string;
 }

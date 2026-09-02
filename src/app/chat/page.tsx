@@ -106,11 +106,20 @@ function ChatContent() {
           onChange={(e) => setSelectedDoc(e.target.value)}
         >
           <option value="">All documents</option>
-          {documents.map((doc) => (
-            <option key={doc.id} value={doc.id}>
-              {doc.file_name}
-            </option>
-          ))}
+          {documents.map((doc) => {
+            const isProcessing = doc.status === "processing" || doc.status === "pending";
+            const isFailed = doc.status === "failed";
+            const label = isProcessing
+              ? `${doc.file_name} (Processing…)`
+              : isFailed
+              ? `${doc.file_name} (Failed)`
+              : doc.file_name;
+            return (
+              <option key={doc.id} value={doc.id} disabled={isProcessing || isFailed}>
+                {label}
+              </option>
+            );
+          })}
         </select>
       </div>
 
